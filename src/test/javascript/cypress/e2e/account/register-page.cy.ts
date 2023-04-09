@@ -8,9 +8,9 @@ import {
   classValid,
 } from '../../support/commands';
 
-describe('/register', () => {
+describe('/account/register', () => {
   beforeEach(() => {
-    cy.visit('/register');
+    cy.visit('/account/register');
   });
 
   beforeEach(() => {
@@ -20,7 +20,7 @@ describe('/register', () => {
   it('should be accessible through menu', () => {
     cy.visit('');
     cy.clickOnRegisterItem();
-    cy.url().should('match', /\/register$/);
+    cy.url().should('match', /\/account\/register$/);
   });
 
   it('should load the register page', () => {
@@ -50,16 +50,13 @@ describe('/register', () => {
 
   it('requires password and confirm password have not the same value', () => {
     cy.get(firstPasswordRegisterSelector).should('have.class', classInvalid).type('test').blur().should('have.class', classValid);
-    cy.get(secondPasswordRegisterSelector)
-      .should('have.class', classInvalid)
-      .type('otherPassword')
-      .blur()
-      .should('have.class', classInvalid);
+    cy.get(secondPasswordRegisterSelector).should('have.class', classInvalid).type('otherPassword');
+    cy.get(submitRegisterSelector).should('be.disabled');
   });
 
   it('register a valid user', () => {
-    const randomEmail = 'Turner.Fisher@gmail.com';
-    const randomUsername = 'Johathan.Block';
+    const randomEmail = 'Lawrence_Nader98@hotmail.com';
+    const randomUsername = 'Rickey40';
     cy.get(usernameRegisterSelector).type(randomUsername);
     cy.get(emailRegisterSelector).type(randomEmail);
     cy.get(firstPasswordRegisterSelector).type('jondoe');

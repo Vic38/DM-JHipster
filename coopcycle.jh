@@ -1,0 +1,103 @@
+application {
+  config {
+    baseName coopcycle
+    applicationType monolith
+    packageName com.jhipster.demo.coopcycle
+    buildTool maven,
+    testFrameworks [cypress]
+  }
+  entities *
+}
+
+enum Role {
+    CLIENT RESTAURATEUR COURSIER SOCIETAIRE DIRECTEUR_GENERAL ADMINISTRATEUR
+}
+
+entity Utilisateur {
+    id Long required unique
+    nomClient String required minlength(2) pattern(/^[A-Z][a-z]+\d$/)
+    age Long min(18) required
+    telephone String minlength(10) maxlength(14)
+    adresse String required
+    role Role
+}
+
+entity Cooperative {
+    id Long required
+    membre Role required
+    name String
+}
+
+entity Restaurant {
+    idRestaurant Long required unique
+    horaireOuverture ZonedDateTime required
+    horaireFermeture ZonedDateTime required
+}
+
+entity Menu {
+	idMenu Long required
+    idRestaurant Long required
+}
+
+entity ProduitCommande {
+    idProduit Long required unique
+    nomProduit String required minlength(2) pattern(/^[A-Z][a-z]+\d$/)
+    prix Long required
+    quantite Integer
+    livraisonPossible Boolean
+}
+
+entity Course{
+	idCourse Long required
+    idLivreur Long required
+    idClient Long required
+    tempsCourse Float
+    adresseRestaurant String required
+    adresseClient String required
+}
+
+entity Commande {
+    idCommande Long required
+    idRestaurant Long required
+    idClient Long required
+    idCourse Long required
+    prixTotal Integer min(1) max(5000) required
+    date ZonedDateTime required
+    etat Etat required
+}
+
+enum MethodePaiement {
+    CB MASTERCARD VISA PAYPAL APPLE_PAY GOOGLE_PAY CHEQUE_REPAS BITCOIN IZLY
+}
+
+entity Paiement {
+    idPaiement Long
+    idCommande Long
+    methodePaiement MethodePaiement required
+}
+
+enum Etat {
+    EN_PREPARATION, PRETE, EN_COURS_DE_LIVRAISON, LIVREE, PAYEE
+}
+
+relationship OneToOne {
+    Paiement to Commande
+    Course to Commande
+}
+
+relationship OneToMany {
+	Restaurant to Menu
+    Restaurant to Commande
+    Menu to ProduitCommande
+    Utilisateur to Commande
+    Cooperative to Utilisateur
+}
+
+relationship ManyToMany {
+    ProduitCommande{commande required} to Commande{produit}
+}
+
+service * with serviceImpl
+paginate * with infinite-scroll
+dto * with mapstruct
+
